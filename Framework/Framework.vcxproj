@@ -153,10 +153,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
+    <ClCompile Include="Framework.cpp" />
+    <ClCompile Include="Scalers\Bilinear.cpp" />
+    <ClCompile Include="Scalers\NearestNeighbour.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Framework.cpp" />
+    <ClInclude Include="const.h" />
+    <ClInclude Include="Scalers\Bilinear.h" />
+    <ClInclude Include="Scalers\Scaler.h" />
+    <ClInclude Include="Scalers\NearestNeighbour.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
