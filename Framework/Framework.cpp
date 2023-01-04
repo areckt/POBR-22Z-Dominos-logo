@@ -7,11 +7,17 @@
 #include "Scalers/Scaler.h"
 #include "ColorModificators/ColorReducer.h"
 #include "ColorModificators/SolidColorizer.h"
+#include "ColorModificators/HistogramEqualizer.h"
+#include "Filters/Lowpass.h"
+#include "Filters/Highpass.h"
 
 
 void resize(cv::Mat& img, int algorithm);
 void reduceColor(cv::Mat& mat);
 void solidColorize(cv::Mat& mat, colors color);
+void equalizeHistogram(cv::Mat& mat);
+void filterLow(cv::Mat& mat);
+void filterHigh(cv::Mat& mat);
 
 
 int main(int argc, char* argv[]) {
@@ -24,29 +30,41 @@ int main(int argc, char* argv[]) {
 	}
 	cv::Mat imgNN = img.clone();
 	cv::Mat imgB = img.clone();
-
-	//resize(imgNN, ScalingAlgorithmType::NearestNeighbour);
-	resize(imgB, ScalingAlgorithmType::Bilinear);
-	
 	cv::imshow("Original image", img);
-	//cv::imshow("1. resized (Nearest Neighbour)", imgNN);
-	cv::imshow("1. resized (Bilinear)", imgB);
 
-	//reduceColor(imgNN);
+	int operationNumber = 1;
+
+	resize(imgB, ScalingAlgorithmType::Bilinear);
+	cv::imshow(std::to_string((operationNumber++))+". resized", imgB);
+
+	//equalizeHistogram(imgB);
+	//cv::imshow("2B. equalized histogram", imgB);
+
 	reduceColor(imgB);
+	cv::imshow(std::to_string((operationNumber++)) + ". reduced color", imgB);
 
-	//cv::imshow("2. reduced color (Nearest Neighbour)", imgNN);
-	cv::imshow("2. reduced color (Bilinear)", imgB);
+	filterLow(imgB);
+	filterLow(imgB);
+	filterHigh(imgB);
+	cv::imshow(std::to_string((operationNumber++)) + ". highpass", imgB);
 
 	solidColorize(imgB, colors::Blue);
 	solidColorize(imgB, colors::Red);
 	solidColorize(imgB, colors::White);
+	cv::imshow(std::to_string((operationNumber++)) + ". solidColorized", imgB);
 
-	//cv::imshow("3. SolidColorized (Nearest Neighbour)", imgNN);
-	cv::imshow("3. SolidColorized (Bilinear)", imgB);
+	filterLow(imgB);
+	filterLow(imgB);
+	cv::imshow(std::to_string((operationNumber++)) + ". lowpass", imgB);
+
+	solidColorize(imgB, colors::Blue);
+	solidColorize(imgB, colors::Red);
+	solidColorize(imgB, colors::White);
+	cv::imshow(std::to_string((operationNumber++)) + ". solidColorized", imgB);
+
+
 
 	cv::waitKey(-1);
-
 	return 0;
 }
 
@@ -75,4 +93,21 @@ void reduceColor(cv::Mat& mat) {
 void solidColorize(cv::Mat& mat, colors color) {
 	SolidColorizer solidColorizer = SolidColorizer();
 	solidColorizer.solidColorize(mat, color);
+}
+
+void equalizeHistogram(cv::Mat& mat) {
+	HistogramEqualizer histogramEqualizer = HistogramEqualizer();
+	histogramEqualizer.equalize(mat);
+}
+
+void filterLow(cv::Mat& image) {
+	IFilter* filter;
+	filter = new Filters::Lowpass();
+	filter->filter(image);
+}
+
+void filterHigh(cv::Mat& image) {
+	IFilter* filter;
+	filter = new Filters::Highpass();
+	filter->filter(image);
 }

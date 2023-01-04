@@ -154,7 +154,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ColorModificators\ColorReducer.cpp" />
+    <ClCompile Include="ColorModificators\HistogramEqualizer.cpp" />
     <ClCompile Include="ColorModificators\SolidColorizer.cpp" />
+    <ClCompile Include="Filters\Lowpass.cpp" />
+    <ClCompile Include="Filters\Highpass.cpp" />
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="Scalers\Bilinear.cpp" />
     <ClCompile Include="Scalers\NearestNeighbour.cpp" />
@@ -162,8 +165,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ColorModificators\ColorReducer.h" />
+    <ClInclude Include="ColorModificators\HistogramEqualizer.h" />
     <ClInclude Include="const.h" />
     <ClInclude Include="ColorModificators\SolidColorizer.h" />
+    <ClInclude Include="Filters\Highpass.h" />
+    <ClInclude Include="Filters\IFilter.h" />
+    <ClInclude Include="Filters\Lowpass.h" />
     <ClInclude Include="Scalers\Bilinear.h" />
     <ClInclude Include="Scalers\Scaler.h" />
     <ClInclude Include="Scalers\NearestNeighbour.h" />
