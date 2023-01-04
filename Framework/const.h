@@ -6,3 +6,9 @@ enum ScalingAlgorithmType {
 	NearestNeighbour,
 	Bilinear
 };
+
+enum colors {
+	White,
+	Blue,
+	Red
+};
