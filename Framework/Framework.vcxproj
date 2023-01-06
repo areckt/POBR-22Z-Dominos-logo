@@ -162,6 +162,8 @@
     <ClCompile Include="Scalers\Bilinear.cpp" />
     <ClCompile Include="Scalers\NearestNeighbour.cpp" />
     <ClCompile Include="Segmentators\SegmentationProcessor.cpp" />
+    <ClCompile Include="Segmentators\BoundingBox.cpp" />
+    <ClCompile Include="Segmentators\SegmentDescriptor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ColorModificators\ColorReducer.h" />
@@ -174,7 +176,9 @@
     <ClInclude Include="Scalers\Bilinear.h" />
     <ClInclude Include="Scalers\Scaler.h" />
     <ClInclude Include="Scalers\NearestNeighbour.h" />
+    <ClInclude Include="Segmentators\BoundingBox.h" />
     <ClInclude Include="Segmentators\SegmentationProcessor.h" />
+    <ClInclude Include="Segmentators\SegmentDescriptor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

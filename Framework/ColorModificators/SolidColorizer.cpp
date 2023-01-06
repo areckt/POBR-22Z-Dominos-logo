@@ -1,7 +1,7 @@
 #include "SolidColorizer.h"
 #include "../Segmentators/SegmentationProcessor.h"
 
-void SolidColorizer::solidColorize(cv::Mat& image, colors color) {
+void SolidColorizer::solidColorize(cv::Mat& image, Color color) {
 	int imageWidth = image.cols;
 	int imageHeight = image.rows;
 
@@ -16,22 +16,23 @@ void SolidColorizer::solidColorize(cv::Mat& image, colors color) {
 
 			switch (color)
 			{
-			case White:
+			case WHITE:
 				if (SegmentationProcessor::checkWhite(vec)) {
 					filtered[pointy][pointx] = cv::Vec3b((uchar)255, (uchar)255, (uchar)255);
 				}
 				break;
-			case Blue:
+			case BLUE:
 				if (SegmentationProcessor::checkBlue(vec)) {
 					filtered[pointy][pointx] = cv::Vec3b((uchar)255, (uchar)0, (uchar)0);
 				}
 				break;
-			case Red:
+			case RED:
 				if (SegmentationProcessor::checkRed(vec)) {
 					filtered[pointy][pointx] = cv::Vec3b((uchar)0, (uchar)0, (uchar)255);
 				}
 				break;
 			default:
+				filtered[pointy][pointx] = cv::Vec3b((uchar)0, (uchar)0, (uchar)0);
 				break;
 			}
 		}

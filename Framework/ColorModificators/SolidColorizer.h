@@ -5,5 +5,5 @@
 
 class SolidColorizer {
 public:
-	void solidColorize(cv::Mat& mat, colors color);
+	void solidColorize(cv::Mat& mat, Color color);
 };

@@ -10,14 +10,17 @@
 #include "ColorModificators/HistogramEqualizer.h"
 #include "Filters/Lowpass.h"
 #include "Filters/Highpass.h"
+#include "Segmentators/SegmentationProcessor.h"
+#include "Segmentators/SegmentDescriptor.h"
 
 
 void resize(cv::Mat& img, int algorithm);
 void reduceColor(cv::Mat& mat);
-void solidColorize(cv::Mat& mat, colors color);
+void solidColorize(cv::Mat& mat, Color color);
 void equalizeHistogram(cv::Mat& mat);
 void filterLow(cv::Mat& mat);
 void filterHigh(cv::Mat& mat);
+std::vector<SegmentDescriptor> segmentImage(cv::Mat& image);
 
 
 int main(int argc, char* argv[]) {
@@ -38,31 +41,24 @@ int main(int argc, char* argv[]) {
 	cv::imshow(std::to_string((operationNumber++))+". resized", imgB);
 
 	//equalizeHistogram(imgB);
-	//cv::imshow("2B. equalized histogram", imgB);
+	//cv::imshow(std::to_string((operationNumber++)) + ". equalized histogram", imgB);
 
-	reduceColor(imgB);
-	cv::imshow(std::to_string((operationNumber++)) + ". reduced color", imgB);
-
-	filterLow(imgB);
-	filterLow(imgB);
-	filterHigh(imgB);
-	cv::imshow(std::to_string((operationNumber++)) + ". highpass", imgB);
-
-	solidColorize(imgB, colors::Blue);
-	solidColorize(imgB, colors::Red);
-	solidColorize(imgB, colors::White);
-	cv::imshow(std::to_string((operationNumber++)) + ". solidColorized", imgB);
+	//reduceColor(imgB);
+	//cv::imshow(std::to_string((operationNumber++)) + ". reduced color", imgB);
 
 	filterLow(imgB);
 	filterLow(imgB);
 	cv::imshow(std::to_string((operationNumber++)) + ". lowpass", imgB);
 
-	solidColorize(imgB, colors::Blue);
-	solidColorize(imgB, colors::Red);
-	solidColorize(imgB, colors::White);
-	cv::imshow(std::to_string((operationNumber++)) + ". solidColorized", imgB);
+	filterHigh(imgB);
+	cv::imshow(std::to_string((operationNumber++)) + ". highpass", imgB);
 
+	/*solidColorize(imgB, Color::BLUE);
+	solidColorize(imgB, Color::RED);
+	solidColorize(imgB, Color::WHITE);
+	cv::imshow(std::to_string((operationNumber++)) + ". solidColorized", imgB);*/
 
+	std::vector<SegmentDescriptor> segments = segmentImage(imgB);
 
 	cv::waitKey(-1);
 	return 0;
@@ -90,7 +86,7 @@ void reduceColor(cv::Mat& mat) {
 	colorReducer.reduce(mat);
 }
 
-void solidColorize(cv::Mat& mat, colors color) {
+void solidColorize(cv::Mat& mat, Color color) {
 	SolidColorizer solidColorizer = SolidColorizer();
 	solidColorizer.solidColorize(mat, color);
 }
@@ -110,4 +106,10 @@ void filterHigh(cv::Mat& image) {
 	IFilter* filter;
 	filter = new Filters::Highpass();
 	filter->filter(image);
+}
+
+std::vector<SegmentDescriptor> segmentImage(cv::Mat& image) {
+	SegmentationProcessor processor;
+	std::vector<SegmentDescriptor> descriptors = processor.segmentImage(image);
+	return descriptors;
 }
