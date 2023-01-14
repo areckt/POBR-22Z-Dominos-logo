@@ -12,6 +12,7 @@
 #include "Filters/Highpass.h"
 #include "Segmentators/SegmentationProcessor.h"
 #include "Segmentators/SegmentDescriptor.h"
+#include "ObjectDetection/TraitDetector.h"
 
 
 void resize(cv::Mat& img, int algorithm);
@@ -21,11 +22,12 @@ void equalizeHistogram(cv::Mat& mat);
 void filterLow(cv::Mat& mat);
 void filterHigh(cv::Mat& mat);
 std::vector<SegmentDescriptor> segmentImage(cv::Mat& image);
+std::map<Color, std::vector<SegmentDescriptor>> detectTraits(std::vector<SegmentDescriptor>& image);
 
 
 int main(int argc, char* argv[]) {
 
-	cv::Mat img = cv::imread("Images/lenna.png", cv::IMREAD_COLOR);
+	cv::Mat img = cv::imread("Images/dominos1.png", cv::IMREAD_COLOR);
 
 	if (!img.data) {
 		std::cout << "Error with image file! \n";
@@ -38,7 +40,7 @@ int main(int argc, char* argv[]) {
 	int operationNumber = 1;
 
 	resize(imgB, ScalingAlgorithmType::Bilinear);
-	cv::imshow(std::to_string((operationNumber++))+". resized", imgB);
+	cv::imshow(std::to_string((operationNumber++)) + ". resized", imgB);
 
 	//equalizeHistogram(imgB);
 	//cv::imshow(std::to_string((operationNumber++)) + ". equalized histogram", imgB);
@@ -59,6 +61,7 @@ int main(int argc, char* argv[]) {
 	cv::imshow(std::to_string((operationNumber++)) + ". solidColorized", imgB);*/
 
 	std::vector<SegmentDescriptor> segments = segmentImage(imgB);
+	std::map<Color, std::vector<SegmentDescriptor>> bins = detectTraits(segments);
 
 	cv::waitKey(-1);
 	return 0;
@@ -112,4 +115,15 @@ std::vector<SegmentDescriptor> segmentImage(cv::Mat& image) {
 	SegmentationProcessor processor;
 	std::vector<SegmentDescriptor> descriptors = processor.segmentImage(image);
 	return descriptors;
+}
+
+std::map<Color, std::vector<SegmentDescriptor>> detectTraits(std::vector<SegmentDescriptor>& segments) {
+	TraitDetector detector;
+	std::map<Color, std::vector<SegmentDescriptor>> bins = {
+			{Color::RED, {} },
+			{Color::BLUE, {} },
+			{Color::WHITE, {} },
+	};
+	detector.detectTraitsAndFilter(segments, bins);
+	return bins;
 }

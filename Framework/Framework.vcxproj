@@ -159,6 +159,7 @@
     <ClCompile Include="Filters\Lowpass.cpp" />
     <ClCompile Include="Filters\Highpass.cpp" />
     <ClCompile Include="Framework.cpp" />
+    <ClCompile Include="ObjectDetection\TraitDetector.cpp" />
     <ClCompile Include="Scalers\Bilinear.cpp" />
     <ClCompile Include="Scalers\NearestNeighbour.cpp" />
     <ClCompile Include="Segmentators\SegmentationProcessor.cpp" />
@@ -173,6 +174,7 @@
     <ClInclude Include="Filters\Highpass.h" />
     <ClInclude Include="Filters\IFilter.h" />
     <ClInclude Include="Filters\Lowpass.h" />
+    <ClInclude Include="ObjectDetection\TraitDetector.h" />
     <ClInclude Include="Scalers\Bilinear.h" />
     <ClInclude Include="Scalers\Scaler.h" />
     <ClInclude Include="Scalers\NearestNeighbour.h" />
