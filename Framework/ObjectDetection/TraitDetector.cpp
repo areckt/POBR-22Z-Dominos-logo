@@ -25,7 +25,14 @@ void TraitDetector::detectTraitsAndFilter(std::vector<SegmentDescriptor>& segmen
 
 			bins[Color::RED].push_back(segment);
 			SetConsoleTextAttribute(hConsole, FOREGROUND_RED);
-			std::cout << "RED   M1: " << norms[0] << '\t' << "M7: " << norms[6] << "\n";
+			std::cout << "RED   M1: " << norms[0] << '\t' <<
+				"M2: " << norms[1] << '\t' <<
+				"M3: " << norms[2] << '\t' <<
+				"M4: " << norms[3] << '\t' <<
+				"M5: " << norms[4] << '\t' <<
+				"M6: " << norms[5] << '\t' <<
+				"M7: " << norms[6] << "\t" <<
+				"WH: " << segment.getWidthHeightRatio() << '\n';
 			break;
 
 		case Color::BLUE:
@@ -41,7 +48,14 @@ void TraitDetector::detectTraitsAndFilter(std::vector<SegmentDescriptor>& segmen
 			}
 			bins[Color::BLUE].push_back(segment);
 			SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE);
-			std::cout << "BLUE  M1: " << norms[0] << '\t' << "M7: " << norms[6] << "\n";
+			std::cout << "BLUE  M1: " << norms[0] << '\t' <<
+				"M2: " << norms[1] << '\t' <<
+				"M3: " << norms[2] << '\t' <<
+				"M4: " << norms[3] << '\t' <<
+				"M5: " << norms[4] << '\t' <<
+				"M6: " << norms[5] << '\t' <<
+				"M7: " << norms[6] << "\t" <<
+				"WH: " << segment.getWidthHeightRatio() << '\n';
 			break;
 
 		case Color::WHITE:
@@ -57,7 +71,14 @@ void TraitDetector::detectTraitsAndFilter(std::vector<SegmentDescriptor>& segmen
 			}
 			bins[Color::WHITE].push_back(segment);
 			SetConsoleTextAttribute(hConsole, FOREGROUND_INTENSITY);
-			std::cout << "WHITE M1: " << norms[0] << '\t' << "M7: " << norms[6] << "\n";
+			std::cout << "WHITE M1: " << norms[0] << '\t' <<
+				"M2: " << norms[1] << '\t' <<
+				"M3: " << norms[2] << '\t' <<
+				"M4: " << norms[3] << '\t' <<
+				"M5: " << norms[4] << '\t' <<
+				"M6: " << norms[5] << '\t' <<
+				"M7: " << norms[6] << "\t" <<
+				"WH: " << segment.getWidthHeightRatio() << '\n';
 			break;
 		}
 	}
