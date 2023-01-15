@@ -13,6 +13,7 @@
 #include "Segmentators/SegmentationProcessor.h"
 #include "Segmentators/SegmentDescriptor.h"
 #include "ObjectDetection/TraitDetector.h"
+#include "ObjectDetection/ObjectRecognizer.h"
 
 
 void resize(cv::Mat& img, int algorithm);
@@ -23,6 +24,9 @@ void filterLow(cv::Mat& mat);
 void filterHigh(cv::Mat& mat);
 std::vector<SegmentDescriptor> segmentImage(cv::Mat& image);
 std::map<Color, std::vector<SegmentDescriptor>> detectTraits(std::vector<SegmentDescriptor>& image);
+std::vector<SegmentDescriptor> recognizeObjects(cv::Mat& ogImage, std::map<Color, std::vector<SegmentDescriptor>> bins);
+void drawBoundingBox(cv::Mat& image, std::vector<SegmentDescriptor> objects);
+void drawSegmentBoundary(cv::Mat& image, BoundingBox bb);
 
 
 int main(int argc, char* argv[]) {
@@ -33,7 +37,6 @@ int main(int argc, char* argv[]) {
 		std::cout << "Error with image file! \n";
 		return -1;
 	}
-	cv::Mat imgNN = img.clone();
 	cv::Mat imgB = img.clone();
 	cv::imshow("Original image", img);
 
@@ -41,6 +44,7 @@ int main(int argc, char* argv[]) {
 
 	resize(imgB, ScalingAlgorithmType::Bilinear);
 	cv::imshow(std::to_string((operationNumber++)) + ". resized", imgB);
+	cv::Mat resized = imgB.clone();
 
 	//equalizeHistogram(imgB);
 	//cv::imshow(std::to_string((operationNumber++)) + ". equalized histogram", imgB);
@@ -62,6 +66,32 @@ int main(int argc, char* argv[]) {
 
 	std::vector<SegmentDescriptor> segments = segmentImage(imgB);
 	std::map<Color, std::vector<SegmentDescriptor>> bins = detectTraits(segments);
+
+	std::cout << '\n';
+	std::cout << '\n';
+	for (auto it = bins.cbegin(); it != bins.cend(); ++it)
+	{
+		for (auto jt = it->second.cbegin(); jt != it->second.cend(); ++jt) {
+			std::cout << jt->getColor() << " " <<
+				"X1: " << jt->getBoundingBox().getX1() << " " <<
+				"Y1: " << jt->getBoundingBox().getY1() << " " <<
+				"X2: " << jt->getBoundingBox().getX2() << " " <<
+				"Y2: " << jt->getBoundingBox().getY2() << '\n';
+		}
+	}
+
+	std::cout << '\n';
+	std::cout << '\n';
+	std::vector<SegmentDescriptor> objects = recognizeObjects(img, bins);
+	for (auto logo : objects) {
+		std::cout << "X1: " << logo.getBoundingBox().getX1() << '\t' <<
+			"Y1: " << logo.getBoundingBox().getY1() << '\t' <<
+			"X2: " << logo.getBoundingBox().getX2() << '\t' <<
+			"Y2: " << logo.getBoundingBox().getY2() << '\n';
+	}
+
+	drawBoundingBox(resized, objects);
+	cv::imshow("result", resized);
 
 	cv::waitKey(-1);
 	return 0;
@@ -126,4 +156,41 @@ std::map<Color, std::vector<SegmentDescriptor>> detectTraits(std::vector<Segment
 	};
 	detector.detectTraitsAndFilter(segments, bins);
 	return bins;
+}
+
+std::vector<SegmentDescriptor> recognizeObjects(cv::Mat& ogImage, std::map<Color, std::vector<SegmentDescriptor>> bins) {
+	ObjectRecognizer recognizer;
+	std::vector<SegmentDescriptor> objects = recognizer.recognizeObject(ogImage, bins);
+	return objects;
+}
+
+void drawBoundingBox(cv::Mat& image, std::vector<SegmentDescriptor> objects) {
+	for (auto object : objects) {
+		BoundingBox bb = object.getBoundingBox();
+		drawSegmentBoundary(image, bb);
+	};
+}
+
+void drawSegmentBoundary(cv::Mat& image, BoundingBox bb) {
+	const cv::Vec3b line = { 0, 255, 0 };
+
+	// draw vertical
+	for (auto i = bb.getX1(); i < bb.getX1() + bb.getWidth(); ++i) {
+		if (i - 1 < 0 || i + 1 > image.rows || bb.getY1() - 1 < 0 || bb.getY1() + 1 > image.cols) {
+			continue;
+		}
+		image.at<cv::Vec3b>(i, bb.getY1()) = line;
+		image.at<cv::Vec3b>(i, bb.getY1() + bb.getHeight()) = line;
+	}
+
+	// draw horizontal
+	for (auto i = bb.getY1(); i < bb.getY1() + bb.getHeight(); ++i) {
+		if (i - 1 < 0 || i + 1 > image.cols || bb.getX1() - 1 < 0 || bb.getX1() + 1 > image.rows) {
+			continue;
+		}
+		image.at<cv::Vec3b>(bb.getX1() + 1, i) = line;
+		image.at<cv::Vec3b>(bb.getX1() + bb.getWidth(), i) = line;
+	}
+
+	return;
 }

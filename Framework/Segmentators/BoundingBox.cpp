@@ -49,11 +49,6 @@ BoundingBox::BoundingBox(int x1, int y1, int x2, int y2) {
 	this->y2 = maxY;
 }
 
-bool BoundingBox::isInside(std::pair<int, int> point) {
-
-	return point.first > x1 && point.first < x2&& point.second > y1 && point.second < y2;
-}
-
 int BoundingBox::getHeight() const {
 	return height;
 }

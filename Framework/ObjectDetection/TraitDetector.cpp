@@ -82,7 +82,7 @@ void TraitDetector::detectTraitsAndFilter(std::vector<SegmentDescriptor>& segmen
 			break;
 		}
 	}
-
+	SetConsoleTextAttribute(hConsole, FOREGROUND_INTENSITY);
 }
 
 void TraitDetector::detectTraits(std::vector<SegmentDescriptor>& segments,
