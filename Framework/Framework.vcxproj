@@ -161,8 +161,7 @@
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="ObjectDetection\ObjectRecognizer.cpp" />
     <ClCompile Include="ObjectDetection\TraitDetector.cpp" />
-    <ClCompile Include="Scalers\Bilinear.cpp" />
-    <ClCompile Include="Scalers\NearestNeighbour.cpp" />
+    <ClCompile Include="Resizers.cpp" />
     <ClCompile Include="Segmentators\SegmentationProcessor.cpp" />
     <ClCompile Include="Segmentators\BoundingBox.cpp" />
     <ClCompile Include="Segmentators\SegmentDescriptor.cpp" />
@@ -177,9 +176,7 @@
     <ClInclude Include="Filters\Lowpass.h" />
     <ClInclude Include="ObjectDetection\ObjectRecognizer.h" />
     <ClInclude Include="ObjectDetection\TraitDetector.h" />
-    <ClInclude Include="Scalers\Bilinear.h" />
-    <ClInclude Include="Scalers\Scaler.h" />
-    <ClInclude Include="Scalers\NearestNeighbour.h" />
+    <ClInclude Include="Resizers.h" />
     <ClInclude Include="Segmentators\BoundingBox.h" />
     <ClInclude Include="Segmentators\SegmentationProcessor.h" />
     <ClInclude Include="Segmentators\SegmentDescriptor.h" />

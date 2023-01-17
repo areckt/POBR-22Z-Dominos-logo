@@ -2,9 +2,7 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 #include "const.h"
-#include "Scalers/NearestNeighbour.h"
-#include "Scalers/Bilinear.h"
-#include "Scalers/Scaler.h"
+#include "Resizers.h"
 #include "ColorModificators/ColorReducer.h"
 #include "ColorModificators/SolidColorizer.h"
 #include "ColorModificators/HistogramEqualizer.h"
@@ -25,7 +23,7 @@ void filterHigh(cv::Mat& mat);
 std::vector<SegmentDescriptor> segmentImage(cv::Mat& image);
 std::map<Color, std::vector<SegmentDescriptor>> detectTraits(std::vector<SegmentDescriptor>& image);
 std::vector<SegmentDescriptor> recognizeObjects(cv::Mat& ogImage, std::map<Color, std::vector<SegmentDescriptor>> bins);
-void drawBoundingBox(cv::Mat& image, std::vector<SegmentDescriptor> objects);
+void drawBoundingBox(cv::Mat& image, std::vector<SegmentDescriptor> logos);
 void drawSegmentBoundary(cv::Mat& image, BoundingBox bb);
 
 
@@ -38,16 +36,23 @@ int main(int argc, char* argv[]) {
 		return -1;
 	}
 	cv::Mat imgB = img.clone();
-	cv::imshow("Original image", img);
-
+	// cv::imshow("Original image", img);
 	int operationNumber = 1;
 
+
+	/*    ___                 ___                             _
+	*	 | _ \ _ _  ___  ___ | _ \ _ _  ___  __  ___  ___ ___(_) _ _   __ _
+	*	 |  _/| '_|/ -_)|___||  _/| '_|/ _ \/ _|/ -_)(_-<(_-<| || ' \ / _` |
+	*	 |_|  |_|  \___|     |_|  |_|  \___/\__|\___|/__//__/|_||_||_|\__, |
+	*																  |___/
+	*/
 	resize(imgB, ScalingAlgorithmType::Bilinear);
-	cv::imshow(std::to_string((operationNumber++)) + ". resized", imgB);
+	cv::imshow(std::to_string((operationNumber++)) + ". resizedB", imgB);
+
 	cv::Mat resized = imgB.clone();
 
-	//equalizeHistogram(imgB);
-	//cv::imshow(std::to_string((operationNumber++)) + ". equalized histogram", imgB);
+	equalizeHistogram(imgB);
+	cv::imshow(std::to_string((operationNumber++)) + ". equalized histogram", imgB);
 
 	//reduceColor(imgB);
 	//cv::imshow(std::to_string((operationNumber++)) + ". reduced color", imgB);
@@ -64,11 +69,21 @@ int main(int argc, char* argv[]) {
 	solidColorize(imgB, Color::WHITE);
 	cv::imshow(std::to_string((operationNumber++)) + ". solidColorized", imgB);*/
 
+
+
+	/*	  ___                         _        _   _                         _
+	*	 / __| ___ __ _ _ __  ___ _ _| |_ __ _| |_(_)___ _ _    __ _ _ _  __| |
+	*	 \__ \/ -_) _` | '  \/ -_) ' \  _/ _` |  _| / _ \ ' \  / _` | ' \/ _` |
+	*	 |___/\___\__, |_|_|_\___|_||_\__\__,_|\__|_\___/_||_| \__,_|_||_\__,_|
+	*	  _____   |___/ _ _     ___      _          _   _
+	*	 |_   _| _ __ _(_) |_  |   \ ___| |_ ___ __| |_(_)___ _ _
+	*	   | || '_/ _` | |  _| | |) / -_)  _/ -_) _|  _| / _ \ ' \
+	*	   |_||_| \__,_|_|\__| |___/\___|\__\___\__|\__|_\___/_||_|
+	*/
 	std::vector<SegmentDescriptor> segments = segmentImage(imgB);
 	std::map<Color, std::vector<SegmentDescriptor>> bins = detectTraits(segments);
 
-	std::cout << '\n';
-	std::cout << '\n';
+	std::cout << "\n\nBounding boxes of found segments:\n";
 	for (auto it = bins.cbegin(); it != bins.cend(); ++it)
 	{
 		for (auto jt = it->second.cbegin(); jt != it->second.cend(); ++jt) {
@@ -80,17 +95,24 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
-	std::cout << '\n';
-	std::cout << '\n';
-	std::vector<SegmentDescriptor> objects = recognizeObjects(img, bins);
-	for (auto logo : objects) {
+	std::cout << "\n\nBounding boxes of found logos:\n";
+	std::vector<SegmentDescriptor> logos = recognizeObjects(img, bins);
+	for (auto logo : logos) {
 		std::cout << "X1: " << logo.getBoundingBox().getX1() << '\t' <<
 			"Y1: " << logo.getBoundingBox().getY1() << '\t' <<
 			"X2: " << logo.getBoundingBox().getX2() << '\t' <<
 			"Y2: " << logo.getBoundingBox().getY2() << '\n';
 	}
 
-	drawBoundingBox(resized, objects);
+
+
+	/*	  ___                   _ _             ___
+	*	 | _ ) ___ _  _ _ _  __| (_)_ _  __ _  | _ ) _____ _____ ___
+	*	 | _ \/ _ \ || | ' \/ _` | | ' \/ _` | | _ \/ _ \ \ / -_|_-<
+	*	 |___/\___/\_,_|_||_\__,_|_|_||_\__, | |___/\___/_\_\___/__/
+	*									|___/
+	*/
+	drawBoundingBox(resized, logos);
 	cv::imshow("result", resized);
 
 	cv::waitKey(-1);
@@ -98,20 +120,16 @@ int main(int argc, char* argv[]) {
 }
 
 void resize(cv::Mat& img, int algorithm) {
-
-	Scaler* scaler;
 	switch (algorithm) {
 	case ScalingAlgorithmType::NearestNeighbour:
-		scaler = new Scalers::NearestNeighbour();
+		resizeNearestNeighbour(img);
 		break;
 	case ScalingAlgorithmType::Bilinear:
-		scaler = new Scalers::Bilinear();
+		resizeBilinear(img);
 		break;
 	default:
 		throw std::runtime_error("Wrong input!");
 	}
-
-	scaler->scale(img);
 }
 
 void reduceColor(cv::Mat& mat) {
@@ -164,9 +182,9 @@ std::vector<SegmentDescriptor> recognizeObjects(cv::Mat& ogImage, std::map<Color
 	return objects;
 }
 
-void drawBoundingBox(cv::Mat& image, std::vector<SegmentDescriptor> objects) {
-	for (auto object : objects) {
-		BoundingBox bb = object.getBoundingBox();
+void drawBoundingBox(cv::Mat& image, std::vector<SegmentDescriptor> logos) {
+	for (auto logo : logos) {
+		BoundingBox bb = logo.getBoundingBox();
 		drawSegmentBoundary(image, bb);
 	};
 }
