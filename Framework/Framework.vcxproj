@@ -153,30 +153,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ColorModificators\ColorReducer.cpp" />
-    <ClCompile Include="ColorModificators\HistogramEqualizer.cpp" />
-    <ClCompile Include="ColorModificators\SolidColorizer.cpp" />
-    <ClCompile Include="Filters\Lowpass.cpp" />
-    <ClCompile Include="Filters\Highpass.cpp" />
+    <ClCompile Include="PreProcessing\ColorReducer.cpp" />
+    <ClCompile Include="PreProcessing\HistogramEqualizer.cpp" />
+    <ClCompile Include="PreProcessing\SolidColorizer.cpp" />
+    <ClCompile Include="PreProcessing\Filters.cpp" />
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="ObjectDetection\ObjectRecognizer.cpp" />
     <ClCompile Include="ObjectDetection\TraitDetector.cpp" />
-    <ClCompile Include="Resizers.cpp" />
+    <ClCompile Include="PreProcessing\Resizers.cpp" />
     <ClCompile Include="Segmentators\SegmentationProcessor.cpp" />
     <ClCompile Include="Segmentators\BoundingBox.cpp" />
     <ClCompile Include="Segmentators\SegmentDescriptor.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ColorModificators\ColorReducer.h" />
-    <ClInclude Include="ColorModificators\HistogramEqualizer.h" />
+    <ClInclude Include="PreProcessing\ColorReducer.h" />
+    <ClInclude Include="PreProcessing\HistogramEqualizer.h" />
     <ClInclude Include="const.h" />
-    <ClInclude Include="ColorModificators\SolidColorizer.h" />
-    <ClInclude Include="Filters\Highpass.h" />
-    <ClInclude Include="Filters\IFilter.h" />
-    <ClInclude Include="Filters\Lowpass.h" />
+    <ClInclude Include="PreProcessing\SolidColorizer.h" />
+    <ClInclude Include="PreProcessing\Filters.h" />
     <ClInclude Include="ObjectDetection\ObjectRecognizer.h" />
     <ClInclude Include="ObjectDetection\TraitDetector.h" />
-    <ClInclude Include="Resizers.h" />
+    <ClInclude Include="PreProcessing\Resizers.h" />
     <ClInclude Include="Segmentators\BoundingBox.h" />
     <ClInclude Include="Segmentators\SegmentationProcessor.h" />
     <ClInclude Include="Segmentators\SegmentDescriptor.h" />

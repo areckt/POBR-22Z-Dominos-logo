@@ -1,5 +1,5 @@
 #include "Resizers.h"
-#include "const.h"
+#include "../const.h"
 #include <algorithm>
 
 void resizeNearestNeighbour(cv::Mat& mat) {

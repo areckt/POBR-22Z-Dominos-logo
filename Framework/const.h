@@ -8,6 +8,11 @@ enum ScalingAlgorithmType {
 	Bilinear
 };
 
+enum FilteringType {
+	LowPass,
+	HighPass
+};
+
 enum Color {
 	WHITE,
 	BLUE,
