@@ -37,46 +37,28 @@ SegmentDescriptor::SegmentDescriptor(std::vector<std::pair<int, int>> segment, C
 
 	this->boundingBox = BoundingBox(minX, minY, maxX, maxY);
 
-	this->widthHeightRatio = (double)(boundingBox.getWidth()) /
-		(boundingBox.getHeight());
+	this->widthHeightRatio = (double)(boundingBox.getWidth()) / (boundingBox.getHeight());
 }
 
 const BoundingBox& SegmentDescriptor::getBoundingBox() const {
 	return boundingBox;
 }
 
-void SegmentDescriptor::setBoundingBox(const BoundingBox& boundingBox) {
-	SegmentDescriptor::boundingBox = boundingBox;
-}
-
 int SegmentDescriptor::getArea() const {
 	return area;
-}
-
-void SegmentDescriptor::setArea(int area) {
-	SegmentDescriptor::area = area;
 }
 
 Color SegmentDescriptor::getColor() const {
 	return color;
 }
 
-void SegmentDescriptor::setColor(Color color) {
-	SegmentDescriptor::color = color;
-}
-
 double SegmentDescriptor::getWidthHeightRatio() const {
 	return widthHeightRatio;
-}
-
-void SegmentDescriptor::setWidthHeightRatio(double widthHeightRatio) {
-	SegmentDescriptor::widthHeightRatio = widthHeightRatio;
 }
 
 const std::vector<std::pair<int, int>>& SegmentDescriptor::getPoints() const {
 	return points;
 }
-
 
 SegmentDescriptor SegmentDescriptor::addPoints(SegmentDescriptor& b) {
 	std::vector<std::pair<int, int>> accumulatedPoints;

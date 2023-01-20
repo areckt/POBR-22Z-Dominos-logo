@@ -4,9 +4,8 @@
 #include "SegmentDescriptor.h"
 #include "../const.h"
 
-
 std::vector<SegmentDescriptor> SegmentationProcessor::segmentImage(cv::Mat& mat) {
-	StateMat states = initializeStateMat(mat);
+	StateMat states = initializeStateMat();
 	ColorMat matOfColors = toColors(mat);
 	SegmentVector listOfSegments = segmentation(matOfColors, states);
 
@@ -16,12 +15,12 @@ std::vector<SegmentDescriptor> SegmentationProcessor::segmentImage(cv::Mat& mat)
 	return descriptors;
 }
 
-StateMat SegmentationProcessor::initializeStateMat(cv::Mat& mat) {
+StateMat SegmentationProcessor::initializeStateMat() {
 	StateMat states;
 
-	for (int i = 0; i < mat.cols; i++) {
+	for (int i = 0; i < RESIZED_WIDTH; i++) {
 		std::vector<State> s;
-		for (int j = 0; j < mat.rows; j++) {
+		for (int j = 0; j < RESIZED_HEIGHT; j++) {
 			s.push_back(UNVISITED);
 		}
 		states.push_back(s);
@@ -30,21 +29,19 @@ StateMat SegmentationProcessor::initializeStateMat(cv::Mat& mat) {
 	return states;
 }
 
-SegmentVector
-SegmentationProcessor::segmentation(ColorMat& mat,
-	StateMat& stateMat) {
+SegmentVector SegmentationProcessor::segmentation(ColorMat& mat, StateMat& stateMat) {
 	SegmentVector segments;
 	int matHeight = mat[0].size();
 	for (int i = 1; i < matHeight - 1; i++) {
 		for (int j = 1; j < mat.size() - 1; j++) {
-			Color color = mat[j][i];
-			State state = stateMat[j][i];
 
+			Color color = mat[j][i];
 			if (color == OTHER) {
 				stateMat[j][i] = MISSED;
 				continue;
 			}
 
+			State state = stateMat[j][i];
 			if (state != UNVISITED) {
 				continue;
 			}
@@ -91,30 +88,24 @@ SegmentationProcessor::segmentation(ColorMat& mat,
 	return segments;
 }
 
-SegmentVector
-SegmentationProcessor::filterSegments(SegmentVector segmentVector) {
+SegmentVector SegmentationProcessor::filterSegments(SegmentVector segmentVector) {
 	SegmentVector result;
 	for (auto segment : segmentVector) {
 		if (segment.size() > SEGMENT_SIZE_THRESHOLD) {
 			result.push_back(segment);
 		}
 	}
-
 	return result;
 }
 
-std::vector<SegmentDescriptor>
-SegmentationProcessor::toDescriptors(SegmentVector segmentVector, ColorMat colorMat) {
+std::vector<SegmentDescriptor> SegmentationProcessor::toDescriptors(SegmentVector segmentVector, ColorMat colorMat) {
 	std::vector<SegmentDescriptor> descriptors;
 	for (auto segment : segmentVector) {
-		int exampleY = segment.front().first;
-		int exampleX = segment.front().second;
+		SegmentDescriptor segmentDescriptor = SegmentDescriptor(segment, colorMat[segment.front().first][segment.front().second]);
 
-		SegmentDescriptor segmentDescriptor = SegmentDescriptor(segment, colorMat[exampleY][exampleX]);
-		if (segmentDescriptor.getBoundingBox().getWidth() < 10 || segmentDescriptor.getBoundingBox().getHeight() < 10) {
+		if (segmentDescriptor.getBoundingBox().getWidth() < 15 || segmentDescriptor.getBoundingBox().getHeight() < 15) {
 			continue;
 		}
-
 		descriptors.push_back(segmentDescriptor);
 	}
 
@@ -127,47 +118,6 @@ typedef struct {
 	uchar b;	// a fraction between 0 and 1
 
 } rgb;
-
-typedef struct {
-	uchar h;	// angle in degrees
-	uchar s;	// a fraction between 0 and 1
-	uchar v;	// a fraction between 0 and 1
-} hsv;
-
-static hsv rgb2hsv(rgb in);
-
-hsv rgb2hsv(rgb rgb)
-{
-	hsv hsv;
-	unsigned char rgbMin, rgbMax;
-
-	rgbMin = rgb.r < rgb.g ? (rgb.r < rgb.b ? rgb.r : rgb.b) : (rgb.g < rgb.b ? rgb.g : rgb.b);
-	rgbMax = rgb.r > rgb.g ? (rgb.r > rgb.b ? rgb.r : rgb.b) : (rgb.g > rgb.b ? rgb.g : rgb.b);
-
-	hsv.v = rgbMax;
-	if (hsv.v == 0)
-	{
-		hsv.h = 0;
-		hsv.s = 0;
-		return hsv;
-	}
-
-	hsv.s = 255 * long(rgbMax - rgbMin) / hsv.v;
-	if (hsv.s == 0)
-	{
-		hsv.h = 0;
-		return hsv;
-	}
-
-	if (rgbMax == rgb.r)
-		hsv.h = 0 + 43 * (rgb.g - rgb.b) / (rgbMax - rgbMin);
-	else if (rgbMax == rgb.g)
-		hsv.h = 85 + 43 * (rgb.b - rgb.r) / (rgbMax - rgbMin);
-	else
-		hsv.h = 171 + 43 * (rgb.r - rgb.g) / (rgbMax - rgbMin);
-
-	return hsv;
-}
 
 typedef struct {
 	int h;		// angle in degrees
@@ -293,32 +243,33 @@ bool SegmentationProcessor::checkRed(cv::Vec3b& vec) {
 
 void SegmentationProcessor::showSegments(SegmentVector vector1, cv::Mat& mat, ColorMat& colorMat) {
 	cv::Mat_<cv::Vec3b> filtered = mat.clone();
+
 	for (int i = 0; i < RESIZED_WIDTH; i++) {
 		for (int j = 0; j < RESIZED_HEIGHT; j++) {
 			filtered[j][i] = cv::Vec3b((uchar)0, (uchar)0, (uchar)0);
 		}
 	}
-	std::for_each(vector1.begin(), vector1.end(), [&](std::vector<std::pair<int, int>> segment) {
 
+	std::for_each(vector1.begin(), vector1.end(), [&](std::vector<std::pair<int, int>> segment) {
 		std::for_each(segment.begin(), segment.end(), [&](std::pair<int, int> point) {
 			int x = point.first;
-			int y = point.second;
+	int y = point.second;
 
-			switch (colorMat[x][y]) {
-			case RED:
-				filtered[y][x] = cv::Vec3b((uchar)0, (uchar)0, (uchar)255);
-				break;
-			case BLUE:
-				filtered[y][x] = cv::Vec3b((uchar)255, (uchar)0, (uchar)0);
-				break;
-			case WHITE:
-				filtered[y][x] = cv::Vec3b((uchar)255, (uchar)255, (uchar)255);
-				break;
-			default:
-				break;
-			}
+	switch (colorMat[x][y]) {
+	case RED:
+		filtered[y][x] = cv::Vec3b((uchar)0, (uchar)0, (uchar)255);
+		break;
+	case BLUE:
+		filtered[y][x] = cv::Vec3b((uchar)255, (uchar)0, (uchar)0);
+		break;
+	case WHITE:
+		filtered[y][x] = cv::Vec3b((uchar)255, (uchar)255, (uchar)255);
+		break;
+	default:
+		break;
+	}
+			});
 		});
-	});
 
 	cv::imshow("segmentation result", filtered);
 }

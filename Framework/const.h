@@ -1,7 +1,7 @@
 #pragma once
 const int RESIZED_WIDTH = 800;
 const int RESIZED_HEIGHT = 600;
-const int SEGMENT_SIZE_THRESHOLD = 40;
+const int SEGMENT_SIZE_THRESHOLD = 100;
 
 enum ScalingAlgorithmType {
 	NearestNeighbour,

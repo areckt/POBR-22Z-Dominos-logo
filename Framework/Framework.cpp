@@ -27,7 +27,7 @@ void drawSegmentBoundary(cv::Mat& image, BoundingBox bb, cv::Vec3b color);
 
 int main(int argc, char* argv[]) {
 
-	const std::string FILE_NAME = "dominos4";
+	const std::string FILE_NAME = "dominos1";
 	cv::Mat img = cv::imread("Images/" + FILE_NAME + ".png", cv::IMREAD_COLOR);
 
 	if (!img.data) {
@@ -86,6 +86,7 @@ int main(int argc, char* argv[]) {
 	drawBoundingBox(allSegmentsBb, segments, cv::Vec3b(255, 0, 255));
 	cv::imshow(std::to_string((operationNumber++)) + ". all segments", allSegmentsBb);
 	cv::imwrite("./Results/" + FILE_NAME + std::to_string((operationNumber)) + "allSegments.png", allSegmentsBb);
+
 	std::map<Color, std::vector<SegmentDescriptor>> bins = detectTraits(segments);
 
 	std::cout << "\n\nBounding boxes of found segments:\n";
@@ -112,7 +113,6 @@ int main(int argc, char* argv[]) {
 			"X2: " << logo.getBoundingBox().getX2() << '\t' <<
 			"Y2: " << logo.getBoundingBox().getY2() << '\n';
 	}
-
 
 
 	/*	  ___                   _ _             ___

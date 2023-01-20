@@ -85,49 +85,6 @@ void TraitDetector::detectTraitsAndFilter(std::vector<SegmentDescriptor>& segmen
 	SetConsoleTextAttribute(hConsole, FOREGROUND_INTENSITY);
 }
 
-void TraitDetector::detectTraits(std::vector<SegmentDescriptor>& segments,
-	std::map<Color, std::vector<SegmentDescriptor>>& bins) {
-
-	std::vector<double> norms = {};
-	for (const auto& segment : segments) {
-		norms = getNorms(segment);
-		switch (segment.getColor()) {
-		case Color::RED:
-			std::cout << norms[0] << " " <<
-				norms[1] << " " <<
-				norms[2] << " " <<
-				norms[3] << " " <<
-				norms[4] << " " <<
-				segment.getWidthHeightRatio() << " RED\n";
-
-
-			bins[Color::RED].push_back(segment);
-
-			break;
-		case Color::BLUE:
-			std::cout << norms[0] << " " <<
-				norms[1] << " " <<
-				norms[2] << " " <<
-				norms[3] << " " <<
-				norms[4] << " " <<
-				segment.getWidthHeightRatio() << " B\n";
-			bins[Color::BLUE].push_back(segment);
-			break;
-
-		case Color::WHITE:
-			std::cout << norms[0] << " " <<
-				norms[1] << " " <<
-				norms[2] << " " <<
-				norms[3] << " " <<
-				norms[4] << " " <<
-				segment.getWidthHeightRatio() << " W\n";
-			bins[Color::WHITE].push_back(segment);
-			break;
-		}
-	}
-
-}
-
 std::vector<double> TraitDetector::getNorms(SegmentDescriptor descriptor) {
 	std::vector<double> norms = {};
 
@@ -165,7 +122,6 @@ std::vector<double> TraitDetector::getNorms(SegmentDescriptor descriptor) {
 	double M21 = m21 - 2 * m11 * i - m20 * j + 2 * m01 * std::pow(i, 2);
 	double M03 = m30 - 3 * m20 * i + 2 * m10 * std::pow(i, 2);
 
-
 	double M1 = (double)((M20 + M02) / std::pow(m00, 2));
 	double M2 = (double)(std::pow(M20 - M02, 2) + 4 * std::pow(M11, 2)) / std::pow(m00, 4);
 	double M3 = (double)(std::pow(M30 - 3 * M12, 2) + std::pow(3 * M21 - M03, 2)) / std::pow(m00, 5);
@@ -183,5 +139,6 @@ std::vector<double> TraitDetector::getNorms(SegmentDescriptor descriptor) {
 	norms.push_back(M5);
 	norms.push_back(M6);
 	norms.push_back(M7);
+
 	return norms;
 }
